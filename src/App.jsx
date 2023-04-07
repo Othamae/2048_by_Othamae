@@ -4,6 +4,7 @@ import { Board } from './components/Board'
 import { WinnerModal } from './components/WinnerModal'
 import { checkGameOver, addNumbersToBoard } from './logic/board'
 import { Controller } from './components/Controller'
+import { getBoardFromStorage, getRecordFromStorage, getScoreFromStorage, resetGameStorage, saveRecordToStorage } from './logic/storage'
 
 function App () {
   const [board, setBoard] = useState(() => {
@@ -11,27 +12,35 @@ function App () {
     addNumbersToBoard(emptyBoard)
     return emptyBoard
   })
-  const [points, setPoints] = useState(0)
-  const [record, setRecord] = useState(parseInt(window.localStorage.getItem('record')) || 0)
+  const [score, setScore] = useState(0)
+  const recordFromStorage = getRecordFromStorage()
+  console.log({ recordFromStorage })
+  const [record, setRecord] = useState(recordFromStorage || 0)
 
   useEffect(() => {
-    return () => {
-      window.localStorage.setItem('record', record)
+    const boardFromStorage = getBoardFromStorage()
+    if (boardFromStorage) {
+      setBoard(boardFromStorage)
     }
-  }, [record])
+    const scoreFromStorage = getScoreFromStorage()
+    if (scoreFromStorage) {
+      setScore(scoreFromStorage)
+    }
+  }, [])
 
   const resetGame = () => {
     const emptyBoard = Array(16).fill(null)
     addNumbersToBoard(emptyBoard)
     setBoard(emptyBoard)
-    setPoints(0)
+    setScore(0)
+    resetGameStorage()
   }
 
-  const handlePointsUpdate = (newPoints) => {
-    setPoints(newPoints)
-    if (newPoints > record) {
-      setRecord(newPoints)
-      window.localStorage.setItem('record', newPoints)
+  const handleScoreUpdate = (newScore) => {
+    setScore(newScore)
+    if (newScore > record) {
+      setRecord(newScore)
+      saveRecordToStorage(newScore)
     }
   }
   const isGameOver = checkGameOver(board)
@@ -43,8 +52,8 @@ function App () {
         <section className='contador'>
           <button className='reset' onClick={resetGame}>Reset Game</button>
           <div className='points'>
-            <div>Points</div>
-            <div>{points}</div>
+            <div>Score</div>
+            <div>{score}</div>
           </div>
           <div className='record'>
             <div>Record</div>
@@ -57,8 +66,8 @@ function App () {
         <Controller
           board={board}
           setBoard={setBoard}
-          points={points}
-          handlePointsUpdate={handlePointsUpdate}
+          score={score}
+          handleScoreUpdate={handleScoreUpdate}
         />
         <div>
           {(isGameOver === true || (isGameOver && Math.max(...board) === 2048)) && (

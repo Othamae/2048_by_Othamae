@@ -1,6 +1,7 @@
 import { addNumbersToBoard } from '../logic/board'
+import { saveBoardToStorage, saveScoreToStorage } from '../logic/storage'
 
-export function Controller ({ board, setBoard, handlePointsUpdate, points }) {
+export function Controller ({ board, setBoard, handleScoreUpdate, score }) {
   const handleRight = () => {
     const newBoard = board.slice()
     for (let i = 0; i < 16; i += 4) {
@@ -10,8 +11,9 @@ export function Controller ({ board, setBoard, handlePointsUpdate, points }) {
       for (let j = newRow.length - 1; j > 0; j--) {
         if (newRow[j] === newRow[j - 1]) {
           newRow[j] *= 2
-          const newPoints = points + newRow[j]
-          handlePointsUpdate(newPoints)
+          const newScore = score + newRow[j]
+          handleScoreUpdate(newScore)
+          saveScoreToStorage(newScore)
           newRow[j - 1] = null
         }
       }
@@ -22,6 +24,7 @@ export function Controller ({ board, setBoard, handlePointsUpdate, points }) {
     }
     addNumbersToBoard(newBoard)
     setBoard([...newBoard])
+    saveBoardToStorage(newBoard)
   }
 
   const handleLeft = () => {
@@ -33,8 +36,9 @@ export function Controller ({ board, setBoard, handlePointsUpdate, points }) {
       for (let j = 0; j < newRow.length - 1; j++) {
         if (newRow[j] === newRow[j + 1]) {
           newRow[j] *= 2
-          const newPoints = points + newRow[j]
-          handlePointsUpdate(newPoints)
+          const newScore = score + newRow[j]
+          handleScoreUpdate(newScore)
+          saveScoreToStorage(newScore)
           newRow[j + 1] = null
         }
       }
@@ -45,6 +49,7 @@ export function Controller ({ board, setBoard, handlePointsUpdate, points }) {
     }
     addNumbersToBoard(newBoard)
     setBoard([...newBoard])
+    saveBoardToStorage(newBoard)
   }
 
   const handleUp = () => {
@@ -56,8 +61,9 @@ export function Controller ({ board, setBoard, handlePointsUpdate, points }) {
       for (let j = 0; j < newCol.length - 1; j++) {
         if (newCol[j] === newCol[j + 1]) {
           newCol[j] *= 2
-          const newPoints = points + newCol[j]
-          handlePointsUpdate(newPoints)
+          const newScore = score + newCol[j]
+          handleScoreUpdate(newScore)
+          saveScoreToStorage(newScore)
           newCol[j + 1] = null
         }
       }
@@ -71,6 +77,7 @@ export function Controller ({ board, setBoard, handlePointsUpdate, points }) {
     }
     addNumbersToBoard(newBoard)
     setBoard([...newBoard])
+    saveBoardToStorage(newBoard)
   }
 
   const handleDown = () => {
@@ -78,15 +85,14 @@ export function Controller ({ board, setBoard, handlePointsUpdate, points }) {
     for (let i = 0; i < 4; i++) {
       const col = [newBoard[i], newBoard[i + 4], newBoard[i + 8], newBoard[i + 12]]
       const newCol = col.filter(a => a !== null)
-      console.log({ newCol })
       for (let j = newCol.length - 1; j > 0; j--) {
         if (newCol[j] === newCol[j - 1]) {
           newCol[j] *= 2
-          const newPoints = points + newCol[j]
-          handlePointsUpdate(newPoints)
+          const newScore = score + newCol[j]
+          handleScoreUpdate(newScore)
+          saveScoreToStorage(newScore)
           newCol[j - 1] = null
         }
-        console.log('Despues: ', { newCol })
       }
       const mergedCol = newCol.filter(a => a !== null)
       const empty = col.length - mergedCol.length
@@ -98,6 +104,7 @@ export function Controller ({ board, setBoard, handlePointsUpdate, points }) {
     }
     addNumbersToBoard(newBoard)
     setBoard([...newBoard])
+    saveBoardToStorage(newBoard)
   }
 
   return (
