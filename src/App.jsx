@@ -1,23 +1,78 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import { Board } from './components/Board'
+import { WinnerModal } from './components/WinnerModal'
 
 const generateNumber = () => {
   const number = Math.random()
   return number > 0.7 ? 4 : 2
 }
 
+// const addNumberToBoard = (board) => {
+//   if (board.indexOf(null) === -1) {
+//     return
+//   }
+//   let number = Math.floor(Math.random() * 16)
+//   while (board[number] !== null) {
+//     number = Math.floor(Math.random() * 16)
+//   }
+//   board[number] = generateNumber()
+// }
+
 const addNumbersToBoard = (board) => {
+  if (board.indexOf(null) === -1) {
+    return
+  }
   let first = Math.floor(Math.random() * 16)
   while (board[first] !== null) {
     first = Math.floor(Math.random() * 16)
   }
   board[first] = generateNumber()
+  if (board.indexOf(null) === -1) {
+    return
+  }
   let second = Math.floor(Math.random() * 16)
   while (board[second] !== null) {
     second = Math.floor(Math.random() * 16)
   }
   board[second] = generateNumber()
+}
+
+function checkGameOver (board) {
+  // Checking if there are empty squares
+  for (let i = 0; i < board.length; i++) {
+    if (board[i] === null) {
+      return null
+    }
+  }
+  // Checking if the maximum value is 2048
+  if (Math.max(...board) === 2048) {
+    return true
+  }
+  // Checking if there are squares with same value that could be merged
+  for (let i = 0; i < board.length; i++) {
+    // Checking to the left
+    if (i % 4 !== 0 && board[i] === board[i - 1]) {
+      return false
+    }
+    // Checking to the right
+    if (i % 4 !== 3 && board[i] === board[i + 1]) {
+      return false
+    }
+    // Checking up
+    if (i >= 4 && board[i] === board[i - 4]) {
+      return false
+    }
+    // Checking down
+    if (i < 12 && board[i] === board[i + 4]) {
+      return false
+    }
+  }
+  return true
+}
+
+function continuePlaying () {
+
 }
 
 function App () {
@@ -27,7 +82,13 @@ function App () {
     return emptyBoard
   })
   const [points, setPoints] = useState(0)
+  const [record, setRecord] = useState(parseInt(window.localStorage.getItem('record')) || 0)
 
+  useEffect(() => {
+    return () => {
+      window.localStorage.setItem('record', record)
+    }
+  }, [record])
   const resetGame = () => {
     const emptyBoard = Array(16).fill(null)
     addNumbersToBoard(emptyBoard)
@@ -35,6 +96,13 @@ function App () {
     setPoints(0)
   }
 
+  const handlePointsUpdate = (newPoints) => {
+    setPoints(newPoints)
+    if (newPoints > record) {
+      setRecord(newPoints)
+      window.localStorage.setItem('record', newPoints)
+    }
+  }
   const handleRight = () => {
     const newBoard = board.slice()
     for (let i = 0; i < 16; i += 4) {
@@ -45,7 +113,8 @@ function App () {
         if (newRow[j] === newRow[j - 1]) {
           newRow[j] *= 2
           const newPoints = points + newRow[j]
-          setPoints(newPoints)
+          // setPoints(newPoints)
+          handlePointsUpdate(newPoints)
           newRow[j - 1] = null
         }
       }
@@ -68,7 +137,8 @@ function App () {
         if (newRow[j] === newRow[j + 1]) {
           newRow[j] *= 2
           const newPoints = points + newRow[j]
-          setPoints(newPoints)
+          // setPoints(newPoints)
+          handlePointsUpdate(newPoints)
           newRow[j + 1] = null
         }
       }
@@ -91,7 +161,8 @@ function App () {
         if (newCol[j] === newCol[j + 1]) {
           newCol[j] *= 2
           const newPoints = points + newCol[j]
-          setPoints(newPoints)
+          // setPoints(newPoints)
+          handlePointsUpdate(newPoints)
           newCol[j + 1] = null
         }
       }
@@ -117,7 +188,8 @@ function App () {
         if (newCol[j] === newCol[j - 1]) {
           newCol[j] *= 2
           const newPoints = points + newCol[j]
-          setPoints(newPoints)
+          // setPoints(newPoints)
+          handlePointsUpdate(newPoints)
           newCol[j - 1] = null
         }
         console.log('Despues: ', { newCol })
@@ -138,6 +210,8 @@ function App () {
     setBoard([...newBoard])
   }
 
+  const isGameOver = checkGameOver(board)
+
   return (
     <>
       <main className='board'>
@@ -147,6 +221,10 @@ function App () {
           <div className='points'>
             <div>Points</div>
             <div>{points}</div>
+          </div>
+          <div className='record'>
+            <div>Record</div>
+            <div>{record}</div>
           </div>
         </section>
         <section className='game'>
@@ -163,6 +241,11 @@ function App () {
           <section className='turn'>
             <button onClick={handleDown}>DOWN</button>
           </section>
+        </div>
+        <div>
+          {(isGameOver === true || (isGameOver && Math.max(...board) === 2048)) && (
+            <WinnerModal checkGameOver={isGameOver} resetGame={resetGame} continuePlaying={continuePlaying} />
+          )}
         </div>
       </main>
     </>
