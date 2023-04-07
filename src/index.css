@@ -3,7 +3,7 @@
   font-size: 16px;
   line-height: 24px;
   font-weight: 400;
-  margin-top: -20px;
+  margin-top: -50px;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -38,7 +38,7 @@ body {
 }
 
 .board h1 {
-  color: #eee;
+  color: #fa04d1;
   margin-bottom: 16px;
 }
 
@@ -94,33 +94,13 @@ section.contador {
   padding: 8px 12px;
   margin: 5px;
   align-items: center;
-}
-/* 
-.points {
-  display: inline-flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-end;
-  flex-grow: 1;
-  
-
-}
-
-
-.points div {
-  padding: 5px;
-  margin: 5px;
-  margin-left: 25px;
-  background: transparent;
-  border: 2px solid #eee;
-  color: #eee;
-  width: 100px;
-  border-radius: 5px;
-  transition: 0.2s;
   font-weight: bold;
-} */
+}
 
-
+.record {
+  color: rgb(246, 50, 203); 
+  border: 2px solid rgba(246, 50, 204, 0.711);
+}
 
 .turn .square,
 .winner .square {
@@ -136,7 +116,7 @@ section.contador {
 }
 
 .square[data-value="2"]{
-  background-color: #f6c4e8c2;  
+  background-color: #f6c4e8ea;   
 }
 .square[data-value="4"]{
   background-color: #f980d79d;
@@ -154,7 +134,7 @@ section.contador {
   background-color: #f800dfc1;
 }
 .square[data-value="128"]{
-  background-color: #f800dfa8;
+  background-color: #f800df94;
 }
 .square[data-value="256"]{
   background-color: #f800df77;
@@ -164,9 +144,21 @@ section.contador {
 }
 .square[data-value="1024"]{
   background-color: #e800f8cd;
+  font-size: 5vw;
+
 }
 .square[data-value="2048"]{
   background-color: #ee02ff;
+  font-size: 5vw;
+}
+
+.square[data-value="4096"],
+.square[data-value="8192"],
+.square[data-value="16384"],
+.square[data-value="32768"]
+{
+  background-color: #93048e;
+  font-size: 5vw;
 }
 
 
@@ -213,6 +205,5 @@ section.contador {
   border-radius: 5px;
   display: grid;
   place-items: center;
-  cursor: pointer;
   font-size: 48px;
 }

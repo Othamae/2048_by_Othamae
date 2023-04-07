@@ -1,22 +1,28 @@
+import { useState } from 'react'
 import { Square } from './Square'
 
-export function WinnerModal ({ checkGameOver, resetGame, continuePlaying }) {
-  if (checkGameOver === null) return null
+export function WinnerModal ({ isGameOver, resetGame }) {
+  const [gameOver, setGameOver] = useState(isGameOver)
+  if (gameOver === null) return null
 
-  const winnerText = checkGameOver === true ? 'GAME OVER' : '2048!!'
+  const winnerText = gameOver === true ? 'GAME OVER' : '2048!!'
 
-  const finishMessage = checkGameOver ? '😖' : '😎'
+  const finishMessage = gameOver ? '😖' : '😎'
+
+  const continuePlaying = () => {
+    setGameOver(null)
+  }
   return (
     <>
-      {checkGameOver && (
+      {gameOver && (
         <section className='winner'>
           <div className='text'>
             <h1>{winnerText}</h1>
             <header className='win'>
-              {checkGameOver && <Square>{finishMessage}</Square>}
+              {gameOver && <Square>{finishMessage}</Square>}
             </header>
             <footer>
-              {checkGameOver
+              {gameOver
                 ? <button onClick={resetGame}>Start again</button>
                 : <button onClick={continuePlaying}>Continue with the game</button>}
             </footer>
